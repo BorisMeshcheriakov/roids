@@ -1,5 +1,5 @@
 import AnimationFrame from "./fps";
-import { createGrid, draw_ship } from "./drawing";
+import { createGrid, draw_ship, draw_asteroid } from "./drawing";
 
 class App {
   private canvas: HTMLCanvasElement;
@@ -27,21 +27,24 @@ class App {
 
   private draw = (): void => {
     this.clear();
-    this.context.lineWidth = 0.5;
-    this.context.strokeStyle = "white";
-    let x = this.context.canvas.width * 0.9;
-    let y = 0;
-    let radius = this.context.canvas.width * 0.1;
+
     createGrid(this.context);
-    for (let r = 0; r <= 0.5 * Math.PI; r += 0.05 * Math.PI) {
-      this.context.save();
-      this.context.rotate(r);
-      draw_ship(this.context, x, y, radius, { guide: true });
-      this.context.beginPath();
-      this.context.moveTo(0, 0);
-      this.context.lineTo(x, 0);
-      this.context.stroke();
-      this.context.restore();
+
+    let segments = 15;
+    let noise = 0.4;
+    for (let x = 0.1; x < 1; x += 0.2) {
+      for (let y = 0.1; y < 1; y += 0.2) {
+        this.context.save();
+        this.context.translate(
+          this.context.canvas.width * x,
+          this.context.canvas.height * y
+        );
+        draw_asteroid(this.context, this.context.canvas.width / 12, segments, {
+          noise: noise,
+          guide: true,
+        });
+        this.context.restore();
+      }
     }
   };
 

@@ -1,0 +1,45 @@
+{
+  "name": "webpack_boilerplate",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/BorisMeshcheriakov/webpack_guides.git",
+  "author": "BorisMeshcheriakov <incarnate6@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack serve --config webpack/webpack.dev.js",
+    "build": "cross-env NODE_ENV=production webpack --config webpack/webpack.prod.js",
+    "lint": "eslint 'src/**/*.js' || true",
+    "prettify": "prettier --write 'src/**/*.js'"
+  },
+  "devDependencies": {
+    "add": "^2.0.6",
+    "clean-webpack-plugin": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.1",
+    "css-minimizer-webpack-plugin": "^4.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "image-minimizer-webpack-plugin": "^3.2.3",
+    "mini-css-extract-plugin": "^2.6.1",
+    "sass": "^1.54.0",
+    "sass-loader": "^13.0.2",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.3",
+    "webpack-merge": "^5.8.0",
+    "yarn": "^1.22.19"
+  },
+  "browserslist": [
+    "> 5%",
+    "not dead",
+    "not IE < 11"
+  ],
+  "dependencies": {
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

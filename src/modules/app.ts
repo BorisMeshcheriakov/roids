@@ -6,6 +6,10 @@ class App {
   private context: CanvasRenderingContext2D;
   public animationFrameId: number;
   private animate;
+  private x: number = 0;
+  private y: number = 0;
+  private yspeed: number = 0;
+  private gravity: number = 0.1;
 
   constructor(appCanvas: HTMLCanvasElement) {
     let canvas = appCanvas;
@@ -14,6 +18,7 @@ class App {
     this.context = context;
     this.animationFrameId = 0;
     this.animate = new AnimationFrame(this.context, 60, this.draw);
+    this.y = this.context.canvas.height / 2;
   }
 
   clear() {
@@ -25,27 +30,29 @@ class App {
     );
   }
 
+  private update() {
+    this.x += 3;
+    this.y += this.yspeed;
+    this.yspeed += this.gravity;
+    if (this.y >= this.context.canvas.height) {
+      this.yspeed *= -0.9;
+    }
+    if (this.x <= 0 || this.x >= this.context.canvas.width) {
+      this.x = (this.x + this.context.canvas.width) % this.context.canvas.width;
+    }
+  }
+
   private draw = (): void => {
     this.clear();
-
     createGrid(this.context);
+    this.context.strokeStyle = "white";
+    this.context.lineWidth = 1.5;
 
-    let segments = 15;
-    let noise = 0.4;
-    for (let x = 0.1; x < 1; x += 0.2) {
-      for (let y = 0.1; y < 1; y += 0.2) {
-        this.context.save();
-        this.context.translate(
-          this.context.canvas.width * x,
-          this.context.canvas.height * y
-        );
-        draw_asteroid(this.context, this.context.canvas.width / 12, segments, {
-          noise: noise,
-          guide: true,
-        });
-        this.context.restore();
-      }
-    }
+    this.context.beginPath();
+    this.context.arc(this.x, this.y, 40, 0, 2 * Math.PI);
+    this.context.fill();
+    this.context.stroke();
+    this.update();
   };
 
   public render = () => {

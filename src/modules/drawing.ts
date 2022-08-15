@@ -35,6 +35,25 @@ export const createGrid = (
   ctx.restore();
 };
 
+export function draw_pacman(
+  ctx: CanvasRenderingContext2D,
+  r: number,
+  m: number
+) {
+  let angle = 0.2 * Math.PI * m;
+  ctx.save();
+  ctx.fillStyle = "yellow";
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, angle, -angle);
+  ctx.lineTo(0, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
 export function draw_ship(
   ctx: CanvasRenderingContext2D,
   radius: number,
@@ -88,26 +107,37 @@ export function draw_ship(
 export function draw_asteroid(
   ctx: CanvasRenderingContext2D,
   radius: number,
-  segments: number,
-  options: any
+  shape: number[],
+  options: {
+    noise?: number;
+    guide?: boolean;
+    stroke?: string;
+    fill?: string;
+  }
 ) {
-  options = options || {};
+  const { noise = 1, guide = true } = options;
   ctx.strokeStyle = options.stroke || "white";
   ctx.fillStyle = options.fill || "black";
   ctx.save();
   ctx.beginPath();
-  for (let i = 0; i < segments; i++) {
-    ctx.rotate((2 * Math.PI) / segments);
-    ctx.lineTo(radius + radius * options.noise * (Math.random() - 0.5), 0);
+  for (var i = 0; i < shape.length; i++) {
+    ctx.rotate((2 * Math.PI) / shape.length);
+    ctx.lineTo(radius + radius * noise * shape[i], 0);
   }
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
-
-  if (options.guide) {
-    (ctx.lineWidth = 0), 5;
+  if (guide) {
+    ctx.lineWidth = 0.5;
     ctx.beginPath();
     ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.lineWidth = 0.2;
+    ctx.arc(0, 0, radius + radius * noise, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, radius - radius * noise, 0, 2 * Math.PI);
     ctx.stroke();
   }
   ctx.restore();

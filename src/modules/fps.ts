@@ -6,7 +6,11 @@ class AnimationFrame {
   private times: number[] = [];
   private animate;
 
-  constructor(ctx: CanvasRenderingContext2D, fps = 60, animate: () => void) {
+  constructor(
+    ctx: CanvasRenderingContext2D,
+    fps = 60,
+    animate: (now: number) => void
+  ) {
     this.ctx = ctx;
     this.requestID = 0;
     this.fps = fps;
@@ -37,7 +41,7 @@ class AnimationFrame {
 
       if (delta >= interval - tolerance) {
         then = now - (delta % interval);
-        this.animate();
+        this.animate(now);
         this.countFPS(then);
       }
     };

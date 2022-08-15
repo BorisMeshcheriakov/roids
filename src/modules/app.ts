@@ -1,15 +1,14 @@
 import AnimationFrame from "./fps";
-import { createGrid, draw_ship, draw_asteroid } from "./drawing";
+import Asteroid from "./asteroid";
+import { createGrid, draw_ship, draw_asteroid, draw_pacman } from "./drawing";
 
 class App {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
   public animationFrameId: number;
-  private animate;
-  private x: number = 0;
-  private y: number = 0;
-  private yspeed: number = 0;
-  private gravity: number = 0.1;
+  // private animate;
+  private previous;
+  private asteroids;
 
   constructor(appCanvas: HTMLCanvasElement) {
     let canvas = appCanvas;
@@ -17,8 +16,13 @@ class App {
     this.canvas = canvas;
     this.context = context;
     this.animationFrameId = 0;
-    this.animate = new AnimationFrame(this.context, 60, this.draw);
-    this.y = this.context.canvas.height / 2;
+    // this.animate = new AnimationFrame(this.context, 60, this.draw);
+    this.previous = 0;
+    this.asteroids = [
+      new Asteroid(this.context, 24, 50, 0.2),
+      // new Asteroid(this.context, 24, 50, 0.5),
+      // new Asteroid(this.context, 5, 50, 0.2),
+    ];
   }
 
   clear() {
@@ -30,37 +34,40 @@ class App {
     );
   }
 
-  private update() {
-    this.x += 3;
-    this.y += this.yspeed;
-    this.yspeed += this.gravity;
-    if (this.y >= this.context.canvas.height) {
-      this.yspeed *= -0.9;
+  private draw = (ctx: CanvasRenderingContext2D, guide: boolean): void => {
+    if (guide) {
+      createGrid(ctx);
     }
-    if (this.x <= 0 || this.x >= this.context.canvas.width) {
-      this.x = (this.x + this.context.canvas.width) % this.context.canvas.width;
-    }
+    this.asteroids.forEach((roid) => roid.draw(ctx, guide));
+  };
+
+  private update(elapsed: number, ctx: CanvasRenderingContext2D) {
+    this.asteroids.forEach((roid) => roid.update(elapsed, ctx));
   }
 
-  private draw = (): void => {
-    this.clear();
-    createGrid(this.context);
-    this.context.strokeStyle = "white";
-    this.context.lineWidth = 1.5;
-
-    this.context.beginPath();
-    this.context.arc(this.x, this.y, 40, 0, 2 * Math.PI);
-    this.context.fill();
-    this.context.stroke();
-    this.update();
+  private frame = (timestamp: number) => {
+    this.context.clearRect(
+      0,
+      0,
+      this.context.canvas.width,
+      this.context.canvas.height
+    );
+    if (!this.previous) this.previous = timestamp;
+    this.update(timestamp / 1000, this.context);
+    this.draw(this.context, true);
+    this.previous = timestamp;
+    window.requestAnimationFrame(this.frame);
   };
 
   public render = () => {
-    this.animate.start();
+    // this.animate.start();
+
+    window.requestAnimationFrame(this.frame);
   };
 
   cancel() {
-    this.animate.stop();
+    // this.animate.stop();
+    // window.cancelAnimationFrame();
   }
 }
 

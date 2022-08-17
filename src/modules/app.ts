@@ -20,8 +20,8 @@ class App {
     this.previous = 0;
     this.asteroids = [
       new Asteroid(this.context, 24, 50, 0.2),
-      // new Asteroid(this.context, 24, 50, 0.5),
-      // new Asteroid(this.context, 5, 50, 0.2),
+      new Asteroid(this.context, 24, 50, 0.5),
+      new Asteroid(this.context, 5, 50, 0.2),
     ];
   }
 
@@ -38,7 +38,7 @@ class App {
     if (guide) {
       createGrid(ctx);
     }
-    this.asteroids.forEach((roid) => roid.draw(ctx, guide));
+    this.asteroids.forEach((roid) => roid.draw(this.context, true));
   };
 
   private update(elapsed: number, ctx: CanvasRenderingContext2D) {

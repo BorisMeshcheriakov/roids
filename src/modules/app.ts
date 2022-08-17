@@ -38,7 +38,7 @@ class App {
     if (guide) {
       createGrid(ctx);
     }
-    this.asteroids.forEach((roid) => roid.draw(this.context, true));
+    this.asteroids.forEach((roid) => roid.draw(ctx, true));
   };
 
   private update(elapsed: number, ctx: CanvasRenderingContext2D) {

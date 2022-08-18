@@ -1,4 +1,4 @@
-export const createGrid = (
+export const draw_grid = (
   ctx: CanvasRenderingContext2D,
   minor?: number,
   major?: number,

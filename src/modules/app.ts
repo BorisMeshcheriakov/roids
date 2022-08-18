@@ -1,6 +1,6 @@
 import AnimationFrame from "./fps";
 import Asteroid from "./asteroid";
-import { createGrid, draw_ship, draw_asteroid, draw_pacman } from "./drawing";
+import { draw_grid, draw_ship, draw_asteroid, draw_pacman } from "./drawing";
 
 class App {
   private canvas: HTMLCanvasElement;
@@ -9,7 +9,6 @@ class App {
   // private animate;
   private previous;
   private elapsed;
-  private asteroids;
 
   constructor(appCanvas: HTMLCanvasElement) {
     let canvas = appCanvas;
@@ -20,57 +19,35 @@ class App {
     // this.animate = new AnimationFrame(this.context, 60, this.draw);
     this.previous = 0;
     this.elapsed = 0;
-    this.asteroids = [
-      new Asteroid(this.context, 24, 50, 0.2),
-      new Asteroid(this.context, 24, 50, 0.5),
-      new Asteroid(this.context, 5, 50, 0.2),
-    ];
   }
 
-  clear() {
-    this.context.clearRect(
-      0,
-      0,
-      this.context.canvas.width,
-      this.context.canvas.height
-    );
-  }
-
-  private draw = (ctx: CanvasRenderingContext2D, guide: boolean): void => {
-    if (guide) {
-      createGrid(ctx);
-    }
-
-    this.asteroids.forEach((roid) => roid.draw(ctx, true));
+  private draw = (ctx: CanvasRenderingContext2D): void => {
+    draw_grid(ctx);
   };
 
-  private update(elapsed: number, ctx: CanvasRenderingContext2D) {
-    this.asteroids.forEach((roid) => roid.update(elapsed, ctx));
-  }
+  private update(elapsed: number) {}
 
   private frame = (timestamp: number) => {
+    if (!this.previous) this.previous = timestamp;
+    this.elapsed = timestamp - this.previous;
     this.context.clearRect(
       0,
       0,
       this.context.canvas.width,
       this.context.canvas.height
     );
-    if (!this.previous) this.previous = timestamp;
-    this.update(timestamp / 1000, this.context);
-    this.draw(this.context, true);
+    this.update(timestamp / 1000);
+    this.draw(this.context);
     this.previous = timestamp;
     window.requestAnimationFrame(this.frame);
   };
 
   public render = () => {
-    // this.animate.start();
-
     window.requestAnimationFrame(this.frame);
   };
 
   cancel() {
-    // this.animate.stop();
-    // window.cancelAnimationFrame();
+    window.cancelAnimationFrame(this.previous);
   }
 }
 

@@ -1,6 +1,7 @@
 import AnimationFrame from "./fps";
 import Asteroid from "./asteroid";
 import { draw_grid, draw_ship, draw_asteroid, draw_pacman } from "./drawing";
+import { Mass } from "./objects";
 
 class App {
   private canvas: HTMLCanvasElement;
@@ -9,6 +10,7 @@ class App {
   // private animate;
   private previous;
   private elapsed;
+  private mass;
 
   constructor(appCanvas: HTMLCanvasElement) {
     let canvas = appCanvas;
@@ -19,13 +21,22 @@ class App {
     // this.animate = new AnimationFrame(this.context, 60, this.draw);
     this.previous = 0;
     this.elapsed = 0;
+    this.mass = new Mass(
+      this.context.canvas.width / 2,
+      this.context.canvas.height / 2,
+      10,
+      20
+    );
   }
 
   private draw = (ctx: CanvasRenderingContext2D): void => {
     draw_grid(ctx);
+    this.mass.draw(ctx);
   };
 
-  private update(elapsed: number) {}
+  private update(elapsed: number) {
+    this.mass.update(elapsed, this.context);
+  }
 
   private frame = (timestamp: number) => {
     if (!this.previous) this.previous = timestamp;

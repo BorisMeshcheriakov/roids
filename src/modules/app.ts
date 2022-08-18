@@ -8,6 +8,7 @@ class App {
   public animationFrameId: number;
   // private animate;
   private previous;
+  private elapsed;
   private asteroids;
 
   constructor(appCanvas: HTMLCanvasElement) {
@@ -18,6 +19,7 @@ class App {
     this.animationFrameId = 0;
     // this.animate = new AnimationFrame(this.context, 60, this.draw);
     this.previous = 0;
+    this.elapsed = 0;
     this.asteroids = [
       new Asteroid(this.context, 24, 50, 0.2),
       new Asteroid(this.context, 24, 50, 0.5),
@@ -38,6 +40,7 @@ class App {
     if (guide) {
       createGrid(ctx);
     }
+
     this.asteroids.forEach((roid) => roid.draw(ctx, true));
   };
 

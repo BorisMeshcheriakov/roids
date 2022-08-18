@@ -36,32 +36,24 @@ class Asteroid {
   }
 
   update(elapsed: number, context: CanvasRenderingContext2D) {
-    const diameter = this.radius * 2;
-    if (
-      this.x - diameter + elapsed * this.x_speed >
-      context.canvas.width + 2 * diameter
-    ) {
-      this.x = -diameter;
+    if (this.x - this.radius + elapsed * this.x_speed > context.canvas.width) {
+      this.x = -this.radius;
     }
-    if (this.x + diameter + elapsed * this.x_speed < 0 - 2 * diameter) {
-      this.x = context.canvas.width + diameter;
+    if (this.x + this.radius + elapsed * this.x_speed < 0) {
+      this.x = context.canvas.width + this.radius;
     }
-    if (
-      this.y - diameter + elapsed * this.y_speed >
-      context.canvas.height + 2 * diameter
-    ) {
-      this.y = -diameter;
+    if (this.y - this.radius + elapsed * this.y_speed > context.canvas.height) {
+      this.y = -this.radius;
     }
-    if (this.y + diameter + elapsed * this.y_speed < 0 - 2 * diameter) {
-      this.y = context.canvas.height + diameter;
+    if (this.y + this.radius + elapsed * this.y_speed < 0) {
+      this.y = context.canvas.height + this.radius;
     }
-    this.x += this.x_speed;
-    this.y += this.y_speed;
-    this.angle = (this.angle + this.rotation_speed) % (2 * Math.PI);
+    this.x += elapsed * this.x_speed;
+    this.y += elapsed * this.y_speed;
+    this.angle = (this.angle + elapsed * this.rotation_speed) % (2 * Math.PI);
   }
 
   draw(ctx: CanvasRenderingContext2D, guide: boolean) {
-    console.log("draw");
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);

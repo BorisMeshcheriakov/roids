@@ -1,7 +1,6 @@
 import AnimationFrame from "./fps";
-import Asteroid from "./asteroid";
 import { draw_grid, draw_ship, draw_asteroid, draw_pacman } from "./drawing";
-import { Mass } from "./objects";
+import { Mass, Asteroid } from "./objects";
 
 class App {
   private canvas: HTMLCanvasElement;
@@ -11,6 +10,7 @@ class App {
   private previous;
   private elapsed;
   private mass;
+  private asteroids;
 
   constructor(appCanvas: HTMLCanvasElement) {
     let canvas = appCanvas;
@@ -27,11 +27,28 @@ class App {
       10,
       20
     );
+    this.asteroids = [
+      new Asteroid(
+        10000,
+        Math.random() * this.context.canvas.width,
+        Math.random() * this.context.canvas.height
+      ),
+      new Asteroid(
+        1000,
+        Math.random() * this.context.canvas.width,
+        Math.random() * this.context.canvas.height
+      ),
+      new Asteroid(
+        100,
+        Math.random() * this.context.canvas.width,
+        Math.random() * this.context.canvas.height
+      ),
+    ];
   }
 
   private draw = (ctx: CanvasRenderingContext2D): void => {
     draw_grid(ctx);
-    this.mass.draw(ctx);
+    this.asteroids.forEach((asteroid) => asteroid.draw(ctx, true));
   };
 
   private update(elapsed: number) {

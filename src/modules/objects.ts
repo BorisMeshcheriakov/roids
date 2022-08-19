@@ -1,9 +1,11 @@
+import { draw_asteroid } from "./drawing";
+
 export class Mass {
-  private x;
-  private y;
+  public x;
+  public y;
   private mass;
-  private radius;
-  private angle;
+  public radius;
+  public angle;
   private x_speed;
   private y_speed;
   private rotation_speed;
@@ -73,5 +75,43 @@ export class Mass {
     c.strokeStyle = "#FFFFFF";
     c.stroke();
     c.restore();
+  }
+}
+
+export class Asteroid extends Mass {
+  private circumference;
+  private segments;
+  private noise;
+  private shape;
+  constructor(
+    mass: number,
+    x: number,
+    y: number,
+    x_speed?: number,
+    y_speed?: number,
+    rotation_speed?: number
+  ) {
+    let density = 1;
+    let radius = Math.sqrt(mass / density / Math.PI);
+    super(x, y, mass, radius, 0, x_speed, y_speed, rotation_speed);
+    this.circumference = 2 * Math.PI * radius;
+    this.segments = Math.ceil(this.circumference / 15);
+    this.segments = Math.min(25, Math.max(5, this.segments));
+    this.noise = 0.2;
+    this.shape = [];
+    for (let i = 0; i < this.segments; i++) {
+      this.shape.push(2 * (Math.random() - 0.5));
+    }
+  }
+
+  draw(ctx: CanvasRenderingContext2D, guide?: boolean) {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    draw_asteroid(ctx, this.radius, this.shape, {
+      noise: this.noise,
+      guide: guide,
+    });
+    ctx.restore();
   }
 }

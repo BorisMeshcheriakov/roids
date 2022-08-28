@@ -1,4 +1,4 @@
-import { draw_asteroid } from "./drawing";
+import { draw_asteroid, draw_ship } from "./drawing";
 
 export class Mass {
   public x;
@@ -6,21 +6,21 @@ export class Mass {
   private mass;
   public radius;
   public angle;
-  private x_speed;
-  private y_speed;
+  public x_speed;
+  public y_speed;
   private rotation_speed;
   constructor(
-    x: number,
-    y: number,
     mass: number,
     radius: number,
+    x: number,
+    y: number,
     angle?: number,
     x_speed?: number,
     y_speed?: number,
     rotation_speed?: number
   ) {
-    this.x = x;
-    this.y = y;
+    this.x = x || 0;
+    this.y = y || 0;
     this.mass = mass || 1;
     this.radius = radius || 50;
     this.angle = angle || 0;
@@ -32,6 +32,7 @@ export class Mass {
   update(elapsed: number, ctx: CanvasRenderingContext2D) {
     this.x += this.x_speed * elapsed;
     this.y += this.y_speed * elapsed;
+
     this.angle += this.rotation_speed * elapsed;
     this.angle %= 2 * Math.PI;
     if (this.x - this.radius > ctx.canvas.width) {
@@ -93,7 +94,7 @@ export class Asteroid extends Mass {
   ) {
     let density = 1;
     let radius = Math.sqrt(mass / density / Math.PI);
-    super(x, y, mass, radius, 0, x_speed, y_speed, rotation_speed);
+    super(mass, radius, x, y, 0, x_speed, y_speed, rotation_speed);
     this.circumference = 2 * Math.PI * radius;
     this.segments = Math.ceil(this.circumference / 15);
     this.segments = Math.min(25, Math.max(5, this.segments));
@@ -110,6 +111,25 @@ export class Asteroid extends Mass {
     ctx.rotate(this.angle);
     draw_asteroid(ctx, this.radius, this.shape, {
       noise: this.noise,
+      guide: guide,
+    });
+    ctx.restore();
+  }
+}
+
+export class Ship extends Mass {
+  constructor(x: number, y: number) {
+    super(10, 20, x, y, 1.5 * Math.PI);
+  }
+
+  draw(ctx: CanvasRenderingContext2D, guide?: boolean) {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.angle);
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.fillStyle = "black";
+    draw_ship(ctx, this.radius, {
       guide: guide,
     });
     ctx.restore();

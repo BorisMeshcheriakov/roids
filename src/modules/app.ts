@@ -1,16 +1,16 @@
 import AnimationFrame from "./fps";
 import { draw_grid, draw_ship, draw_asteroid, draw_pacman } from "./drawing";
-import { Mass, Asteroid } from "./objects";
+import { Mass, Asteroid, Ship } from "./objects";
 
 class App {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
   public animationFrameId: number;
-  // private animate;
   private previous;
   private elapsed;
   private mass;
   private asteroids;
+  private ship;
 
   constructor(appCanvas: HTMLCanvasElement) {
     let canvas = appCanvas;
@@ -18,7 +18,6 @@ class App {
     this.canvas = canvas;
     this.context = context;
     this.animationFrameId = 0;
-    // this.animate = new AnimationFrame(this.context, 60, this.draw);
     this.previous = 0;
     this.elapsed = 0;
     this.mass = new Mass(
@@ -27,32 +26,40 @@ class App {
       10,
       20
     );
-    this.asteroids = [
-      new Asteroid(
+    this.asteroids = [];
+    for (let i = 0; i < 10; i++) {
+      let asteroid = new Asteroid(
         10000,
-        Math.random() * this.context.canvas.width,
-        Math.random() * this.context.canvas.height
-      ),
-      new Asteroid(
-        1000,
-        Math.random() * this.context.canvas.width,
-        Math.random() * this.context.canvas.height
-      ),
-      new Asteroid(
-        100,
-        Math.random() * this.context.canvas.width,
-        Math.random() * this.context.canvas.height
-      ),
-    ];
+        Math.random() * context.canvas.width,
+        Math.random() * context.canvas.height
+      );
+      asteroid.push(Math.random() * 2 * Math.PI, 1000, 60);
+      asteroid.twist(Math.random() * 100, 60);
+      this.asteroids.push(asteroid);
+    }
+    this.ship = new Ship(context.canvas.width / 2, context.canvas.height / 2);
   }
 
   private draw = (ctx: CanvasRenderingContext2D): void => {
     draw_grid(ctx);
+
     this.asteroids.forEach((asteroid) => asteroid.draw(ctx, true));
+    this.ship.draw(ctx, true);
   };
 
-  private update(elapsed: number) {
-    this.mass.update(elapsed, this.context);
+  private update(elapsed: number, ctx: CanvasRenderingContext2D) {
+    if (Math.abs(this.ship.speed()) < 15) {
+      this.ship.angle += Math.PI * 2 * 0.01;
+    }
+
+    if (Math.abs(this.ship.speed()) > 100) {
+      this.ship.angle = this.ship.movement_angle() + Math.PI;
+    }
+
+    this.ship.push(this.ship.angle, 1000, elapsed);
+
+    this.asteroids.forEach((asteroid) => asteroid.update(elapsed, ctx));
+    this.ship.update(elapsed, ctx);
   }
 
   private frame = (timestamp: number) => {
@@ -64,7 +71,7 @@ class App {
       this.context.canvas.width,
       this.context.canvas.height
     );
-    this.update(timestamp / 1000);
+    this.update(this.elapsed / 1000, this.context);
     this.draw(this.context);
     this.previous = timestamp;
     window.requestAnimationFrame(this.frame);
